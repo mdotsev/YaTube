@@ -160,18 +160,16 @@ class PostsPagesTests(TestCasePresets):
             )
             self.assertNotIn(self.post, response.context['page_obj'])
 
-    
-    
-    
+
 class FollowingsTests(TestCasePresets):
-    
+
     def test_following(self):
         """
-        Авторизованный пользователь может подписываться 
+        Авторизованный пользователь может подписываться
         на других пользователей и удалять их из подписок
         """
         self.user_client.get(reverse(
-            'posts:profile_follow', 
+            'posts:profile_follow',
             kwargs={'username': self.author}
         ))
         self.assertTrue(
@@ -183,7 +181,7 @@ class FollowingsTests(TestCasePresets):
         )
 
         self.user_client.get(reverse(
-            'posts:profile_unfollow', 
+            'posts:profile_unfollow',
             kwargs={'username': self.author}
         ))
         self.assertFalse(
@@ -196,21 +194,21 @@ class FollowingsTests(TestCasePresets):
 
     def test_index_following(self):
         """
-        Новая запись пользователя появляется в ленте тех, кто на 
+        Новая запись пользователя появляется в ленте тех, кто на
         него подписан и не появляется в ленте тех, кто не подписан
         """
         self.user_client.get(reverse(
-            'posts:profile_follow', 
+            'posts:profile_follow',
             kwargs={'username': self.author}
         ))
 
-        response= self.user_client.get(
+        response = self.user_client.get(
             reverse('posts:follow_index')
         )
 
         self.assertIn(self.post, response.context['page_obj'])
 
-        response=self.guest_client.get(reverse(
+        response = self.guest_client.get(reverse(
             'posts:follow_index'
         ))
 

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import (
-    get_object_or_404, redirect, render, get_list_or_404
+    get_object_or_404, redirect, render,
 )
 
 from .forms import PostForm, CommentForm
@@ -45,7 +45,7 @@ def profile(request, username):
     template = 'posts/profile.html'
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
-    
+
     if request.user.is_authenticated:
         following = Follow.objects.filter(user=request.user,
                                           author=author).exists()
@@ -142,9 +142,9 @@ def follow_index(request):
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(
-                user=request.user,
-                author=author
-            ).exists()
+        user=request.user,
+        author=author
+    ).exists()
     if author != request.user and follow is not True:
         Follow.objects.create(user=request.user, author=author)
     return redirect('posts:profile', username=username)

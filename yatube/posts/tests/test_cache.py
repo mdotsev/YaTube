@@ -1,8 +1,7 @@
-from django.core.cache import cache
 from django.urls import reverse
 
 from .presets import TestCasePresets
-from posts.models import Post, Group, Follow
+from posts.models import Post
 
 
 class IndexCacheTests(TestCasePresets):
