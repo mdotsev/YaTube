@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Технологии{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+  <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    <h1 class="display-5 fw-normal">Вот что я умею</h1>
+  </div>
+  <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm border-primary">
+        <div class="card-header py-3 text-white bg-primary border-primary">
+          <h4 class="my-0 fw-normal">Django</h4>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title pricing-card-title">В 4м спринте прокачали<small class="text-muted fw-light"></small></h4>
+          <ul class="list mt-3 mb-3 text-start">
+            <li>Дзен</li>
+            <li>Формы</li>
+            <li>Фильтры</li>
+            <li>Декораторы</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm border-primary">
+        <div class="card-header py-3 text-white bg-primary border-primary">
+          <h4 class="my-0 fw-normal">Python</h4>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title pricing-card-title">Время иконок!<small class="text-muted fw-light"></small></h4>
+          <ul class="list-unstyled mt-3 mb-3 fw-bold lh-lg">
+            <li><img src="{% static 'img/back.svg' %}" width="30" height="30" class="d-inline-block align-top" alt=""></li>
+            <li><img src="{% static 'img/app-indicator.svg' %}" width="30" height="30" class="d-inline-block align-top" alt=""></li>
+            <li><img src="{% static 'img/arrow-repeat.svg' %}" width="30" height="30" class="d-inline-block align-top" alt=""></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm border-primary">
+        <div class="card-header py-3 text-white bg-primary border-primary">
+          <h4 class="my-0 fw-normal">Bootstrap</h4>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title pricing-card-title">Совсем немного<small class="text-muted fw-light"></small></h4>
+          <ul class="list mt-3 mb-3 text-start">
+            <li>Умею тырить страницы прайсинга</li>
+            <li>Учусь работать с документацией</li>
+            <li>Не могу перенести дизайн фигмы</li>
+            <li>Фронтенд разом не освоить :(</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} 

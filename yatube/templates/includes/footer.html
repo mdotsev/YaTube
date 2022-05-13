@@ -1,0 +1,14 @@
+{% with request.resolver_match.view_name as view_name %} 
+      <center>© 
+            <span style="
+                  {% if view_name  == 'about:author' %}
+                  color:white
+                  {% endif %}">{{ year }} Copyright
+            </span><span style="color:red">Ya</span><span
+                style="
+                {% if view_name  == 'about:author' %}
+                color:white
+                {% endif %}">tube
+            </span>
+      </center>   
+{% endwith %} 

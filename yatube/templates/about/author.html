@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Об авторе проекта
+{% endblock %}
+
+{% block header %}
+  {% include 'includes/header.html' %}
+{% endblock %}
+
+{% block content %}
+<body style="background-color: black">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col">
+        <p class="class=text-break text-end fs-3" style="color: white"> 
+          <span class="fw-bold">Привет! </span>Меня зовут Максим <br><br>
+          Я студент Практикума и СПбГТИ(ТУ) <br>
+          Это первый проект, написанный
+          мною. Все, кроме верстки,
+          конечно, ее еще предстоит
+          подкачать
+        </p>
+      </div>
+      <div class="col">
+        <img src="{% static 'img/Author.png' %}" class="rounded mx-auto d-block">
+      </div>  
+    </div>
+  </div>    
+</body>
+{% endblock %} 
