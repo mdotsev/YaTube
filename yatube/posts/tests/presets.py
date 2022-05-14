@@ -1,12 +1,12 @@
 import shutil
 import tempfile
 
-from django.contrib.auth import get_user_model
-from django.test import TestCase, Client, override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
 
-from posts.models import Post, Group, Comment
+from posts.models import Comment, Follow, Group, Post
 
 User = get_user_model()
 
@@ -64,6 +64,10 @@ class TestCasePresets(TestCase):
             ),
             author=cls.user,
             post=cls.post
+        )
+        cls.follow = Follow.objects.create(
+            user=cls.user,
+            author=cls.author,
         )
 
     @classmethod

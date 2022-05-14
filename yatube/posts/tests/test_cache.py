@@ -1,7 +1,9 @@
+from django.core.cache import cache
 from django.urls import reverse
 
-from .presets import TestCasePresets
 from posts.models import Post
+
+from .presets import TestCasePresets
 
 
 class IndexCacheTests(TestCasePresets):
@@ -24,4 +26,13 @@ class IndexCacheTests(TestCasePresets):
             response.content,
             response_deleted.content,
             'При удалении пост пропал со страницы до очистки кэша'
+        )
+        cache.clear()
+        response_deleted_cache_cleared = self.author_client.get(
+            reverse('posts:index')
+        )
+        self.assertNotEqual(
+            response.content,
+            response_deleted_cache_cleared.content,
+            'При удалении пост не пропал со страницы после очистки кэша'
         )

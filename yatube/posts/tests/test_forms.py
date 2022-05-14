@@ -1,8 +1,9 @@
-from posts.forms import PostForm
-from posts.models import Post, Comment
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+
+from posts.forms import PostForm
+from posts.models import Comment, Post
 
 from .presets import TestCasePresets
 
@@ -99,7 +100,6 @@ class CommentCreateFormTests(TestCasePresets):
         form_data = {
             'text': text,
         }
-        # Отправляем POST-запрос
         self.user_client.post(
             reverse(
                 'posts:add_comment',
@@ -109,9 +109,15 @@ class CommentCreateFormTests(TestCasePresets):
             follow=True
         )
 
-        self.assertTrue(
-            Comment.objects.filter(
-                post_id=self.post.id,
-                text=text,
-            ).exists()
+        response = self.author_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': self.post.id})
+        )
+        new_comment = Comment.objects.filter(
+            text=text
+        )
+
+        self.assertIn(
+            new_comment[0],
+            response.context['comments'],
+            'Комментариев под постом нет'
         )

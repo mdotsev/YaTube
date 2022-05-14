@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+
 from .presets import TestCasePresets
 
 User = get_user_model()

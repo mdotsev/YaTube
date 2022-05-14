@@ -1,13 +1,13 @@
-from django.conf import settings
+import time
+
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from posts.models import Follow, Group, Post
 
-from posts.models import Post, Group, Follow
 from .presets import TestCasePresets
-
-import time
 
 User = get_user_model()
 
@@ -162,45 +162,75 @@ class PostsPagesTests(TestCasePresets):
 
 
 class FollowingsTests(TestCasePresets):
+    """
+    Тестирование функционала подписок.
+    В presets.py создана подписка User на Author
+    """
 
     def test_following(self):
         """
-        Авторизованный пользователь может подписываться
-        на других пользователей и удалять их из подписок
+        Авторизованный пользователь может подписываться на авторов
         """
-        self.user_client.get(reverse(
+        # пользователь Author подписывается на пользователя User
+        self.author_client.get(reverse(
             'posts:profile_follow',
-            kwargs={'username': self.author}
+            kwargs={'username': self.user}
         ))
         self.assertTrue(
             Follow.objects.filter(
-                user=self.user,
-                author=self.author
+                user=self.author,
+                author=self.user
             ).exists(),
             'Подписка не удалась'
         )
 
+    def test_refollowing(self):
+        """
+        Повторная подписка не работает
+        """
+
+        self.author_client.get(reverse(
+            'posts:profile_follow',
+            kwargs={'username': self.user}
+        ))
+
+        follows = self.author.follower.all().count()
+        self.assertEqual(follows, 1, 'Повторной подписки быть не должно')
+
+    def test_self_following(self):
+        """
+        Подписка на себя не работает
+        """
+
+        self.user_client.get(reverse(
+            'posts:profile_follow',
+            kwargs={'username': self.user}
+        ))
+
+        follows = self.user.follower.all().count()
+        self.assertEqual(follows, 1, 'Подписка на себя работает')
+
+    def test_unfollowing(self):
+        """
+        Авторизованный пользователь может отписываться от авторов
+        """
+        # пользователь User отписывается от пользователя Author
         self.user_client.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': self.author}
         ))
         self.assertFalse(
             Follow.objects.filter(
-                user=self.user,
-                author=self.author
+                user=self.author,
+                author=self.user
             ).exists(),
             'Отписка не удалась'
         )
 
-    def test_index_following(self):
+    def test_index_following_subscribed(self):
         """
-        Новая запись пользователя появляется в ленте тех, кто на
-        него подписан и не появляется в ленте тех, кто не подписан
+        Новая запись автора появляется в ленте подписчика
         """
-        self.user_client.get(reverse(
-            'posts:profile_follow',
-            kwargs={'username': self.author}
-        ))
 
         response = self.user_client.get(
             reverse('posts:follow_index')
@@ -208,9 +238,14 @@ class FollowingsTests(TestCasePresets):
 
         self.assertIn(self.post, response.context['page_obj'])
 
-        response = self.guest_client.get(reverse(
-            'posts:follow_index'
-        ))
+    def test_index_following_unsubscribed(self):
+        """
+        Новая запись автора не появляется в ленте неподписанного
+        """
+
+        response = self.guest_client.get(
+            reverse('posts:follow_index')
+        )
 
         self.assertIsNone(
             response.context,
