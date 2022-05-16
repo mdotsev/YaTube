@@ -164,13 +164,36 @@ class PostsPagesTests(TestCasePresets):
 class FollowingsTests(TestCasePresets):
     """
     Тестирование функционала подписок.
-    В presets.py создана подписка User на Author
+    В presets.py SetUp() создана подписка User на Author
     """
+    @staticmethod
+    def _following_exists(self, *, follower, author):
+        self.assertTrue(
+            Follow.objects.filter(
+                user=follower,
+                author=author
+            ).exists(),
+            'Такой подписки нет'
+        )
+
+    @staticmethod
+    def _following_does_not_exist(self, *, follower, author):
+        self.assertFalse(
+            Follow.objects.filter(
+                user=follower,
+                author=author
+            ).exists(),
+            'Такая подписка уже существует'
+        )
 
     def test_following(self):
         """
         Авторизованный пользователь может подписываться на авторов
         """
+        # до запроса подписки не существовало
+        self._following_does_not_exist(
+            self, follower=self.author, author=self.user
+        )
         # пользователь Author подписывается на пользователя User
         self.author_client.get(reverse(
             'posts:profile_follow',
@@ -188,13 +211,17 @@ class FollowingsTests(TestCasePresets):
         """
         Повторная подписка не работает
         """
-
-        self.author_client.get(reverse(
+        # до повторной подписки подписка уже была
+        self._following_exists(
+            self, follower=self.user, author=self.author
+        )
+        # пользователь User подписывается на пользователя Author
+        self.user_client.get(reverse(
             'posts:profile_follow',
-            kwargs={'username': self.user}
+            kwargs={'username': self.author}
         ))
 
-        follows = self.author.follower.all().count()
+        follows = self.user.follower.all().count()
         self.assertEqual(follows, 1, 'Повторной подписки быть не должно')
 
     def test_self_following(self):
@@ -214,6 +241,9 @@ class FollowingsTests(TestCasePresets):
         """
         Авторизованный пользователь может отписываться от авторов
         """
+        self._following_exists(
+            self, follower=self.user, author=self.author
+        )
         # пользователь User отписывается от пользователя Author
         self.user_client.get(reverse(
             'posts:profile_unfollow',
@@ -231,7 +261,9 @@ class FollowingsTests(TestCasePresets):
         """
         Новая запись автора появляется в ленте подписчика
         """
-
+        self._following_exists(
+            self, follower=self.user, author=self.author
+        )
         response = self.user_client.get(
             reverse('posts:follow_index')
         )
@@ -242,6 +274,12 @@ class FollowingsTests(TestCasePresets):
         """
         Новая запись автора не появляется в ленте неподписанного
         """
+        self.assertFalse(
+            Follow.objects.filter(
+                user=self.guest
+            ).exists(),
+            'У пользователя есть подписки'
+        )
 
         response = self.guest_client.get(
             reverse('posts:follow_index')

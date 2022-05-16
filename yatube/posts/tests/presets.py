@@ -36,6 +36,7 @@ class TestCasePresets(TestCase):
             content=small_gif,
             content_type='image/gif'
         )
+        cls.guest = User.objects.create_user(username='guest')
         cls.user = User.objects.create_user(username='user')
         cls.author = User.objects.create_user(username='author')
         cls.group = Group.objects.create(
@@ -65,10 +66,6 @@ class TestCasePresets(TestCase):
             author=cls.user,
             post=cls.post
         )
-        cls.follow = Follow.objects.create(
-            user=cls.user,
-            author=cls.author,
-        )
 
     @classmethod
     def tearDownClass(cls):
@@ -86,3 +83,8 @@ class TestCasePresets(TestCase):
         self.author_client = Client()
         # Авторизуем атвора
         self.author_client.force_login(self.author)
+
+        self.follow = Follow.objects.create(
+            user=self.user,
+            author=self.author,
+        )

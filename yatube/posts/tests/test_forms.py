@@ -93,7 +93,7 @@ class CommentCreateFormTests(TestCasePresets):
 
     def test_create_comment(self):
         """
-        После успешной отправки комментарий появляется на странице поста
+        После успешной отправки комментария создается запись в Comment
         """
 
         text = 'Клевая статья, чел'
@@ -109,15 +109,9 @@ class CommentCreateFormTests(TestCasePresets):
             follow=True
         )
 
-        response = self.author_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': self.post.id})
-        )
-        new_comment = Comment.objects.filter(
-            text=text
-        )
-
-        self.assertIn(
-            new_comment[0],
-            response.context['comments'],
-            'Комментариев под постом нет'
+        self.assertTrue(
+            Comment.objects.filter(
+                post_id=self.post.id,
+                text=text,
+            ).exists()
         )

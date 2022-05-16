@@ -9,7 +9,7 @@
     <h1>Все посты пользователя {{ author.get_full_name }} </h1>
     <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
     <div class="mb-3">
-      {% if request.user == post.author %}
+      {% if request.user != author %}
         {% if following %}
           <a
             class="btn btn-lg btn-light"
