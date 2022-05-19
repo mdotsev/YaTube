@@ -18,9 +18,12 @@ class IndexCacheTests(TestCasePresets):
 
     def test_index_page_cache(self):
         """Пост не пропадает со страницы, если не очистить кэш"""
+
         response = self.author_client.get(reverse('posts:index'))
+
         self.post_delete.delete()
         response_deleted = self.author_client.get(reverse('posts:index'))
+
         self.assertEqual(
             response.content,
             response_deleted.content,
@@ -31,8 +34,10 @@ class IndexCacheTests(TestCasePresets):
         """Пост пропадает со страницы только после очистки кэша"""
 
         self.author_client.get(reverse('posts:index'))
+
         self.post_delete.delete()
         response_deleted = self.author_client.get(reverse('posts:index'))
+
         cache.clear()
         response_deleted_cache_cleared = self.author_client.get(
             reverse('posts:index')

@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.test import Client
 
 from posts.models import Follow, Group, Post
 
@@ -188,21 +189,25 @@ class FollowingsTests(TestCasePresets):
 
     def test_following(self):
         """
-        Авторизованный пользователь может подписываться на авторов
+        Авторизованный пользователь follower может подписаться на автора
         """
+        self.follower = User.objects.create_user(username='follower')
+        self.follower_client = Client()
+        # Авторизуем пользователя
+        self.follower_client.force_login(self.follower)
         # до запроса подписки не существовало
         self._following_does_not_exist(
-            self, follower=self.author, author=self.user
+            self, follower=self.follower, author=self.author
         )
         # пользователь Author подписывается на пользователя User
-        self.author_client.get(reverse(
+        self.follower_client.get(reverse(
             'posts:profile_follow',
-            kwargs={'username': self.user}
+            kwargs={'username': self.author}
         ))
         self.assertTrue(
             Follow.objects.filter(
-                user=self.author,
-                author=self.user
+                user=self.follower,
+                author=self.author
             ).exists(),
             'Подписка не удалась'
         )
@@ -215,14 +220,21 @@ class FollowingsTests(TestCasePresets):
         self._following_exists(
             self, follower=self.user, author=self.author
         )
+
+        followings = self.user.follower.all().count()
         # пользователь User подписывается на пользователя Author
         self.user_client.get(reverse(
             'posts:profile_follow',
             kwargs={'username': self.author}
         ))
 
-        follows = self.user.follower.all().count()
-        self.assertEqual(follows, 1, 'Повторной подписки быть не должно')
+        foolowings_after_refollowing = self.user.follower.all().count()
+
+        self.assertEqual(
+            followings,
+            foolowings_after_refollowing,
+            'Повторной подписки быть не должно'
+        )
 
     def test_self_following(self):
         """

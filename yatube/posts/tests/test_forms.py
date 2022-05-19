@@ -53,16 +53,6 @@ class PostCreateFormTests(TestCasePresets):
         # Проверяем, увеличилось ли количество постов
         self.assertEqual(Post.objects.count(), posts_count + 1,
                          ('Количество постов не увеличилось'))
-        pass
-        # Проверяем, увеличилось ли число постов
-        self.assertEqual(Post.objects.count(), posts_count + 1)
-        # Проверяем, что создалась именно эта запись
-        self.assertTrue(
-            Post.objects.filter(
-                group=self.group,
-                text=text,
-            ).exists()
-        )
 
     def test_edit_post(self):
         """Валидная форма изменяет запись."""
